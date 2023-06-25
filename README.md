@@ -18,8 +18,8 @@ Download the dataset to `$DATASET`
 DATASET=/data/datasets/bdd100k/
 ls -l $DATASET
 > bdd100k_images_100k.zip  bdd100k_labels_release.zip 
-unzip -j $DATASET/bdd100k_images_100k.zip bdd100k/images/* -d $DATASET/images
-unzip -j $DATASET/bdd100k_labels_release.zip bdd100k/labels/* -d $DATASET/labels
+unzip $DATASET/bdd100k_images_100k.zip bdd100k/images/* -d $DATASET/..
+unzip -j $DATASET/bdd100k_labels_release.zip bdd100k/labels/* -d $DATASET/labels_bdd100k
 ```
 
 ### Prepare Annotations
@@ -30,5 +30,5 @@ python scripts/bdd2coco.py '--bdd_dir' $DATASET
 ```
 Now we convert the coco format annotations to the yolo format (COCO->YOLO)
 ```bash
-convert
+python scripts/coco2yolo.py '--bdd_dir' $DATASET
 ```

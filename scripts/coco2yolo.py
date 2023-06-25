@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser(description='bdd2coco')
 parser.add_argument('--bdd_dir', type=str, required=True)
 
 
-def convert_coco(labels_dir='../coco/annotations/'):
+def convert_coco(dataset_dir='/data/datasets/bdd_100k'):
     """Converts COCO dataset annotations to a format suitable for training YOLOv5 models.
 
     Args:
@@ -28,14 +28,19 @@ def convert_coco(labels_dir='../coco/annotations/'):
     Output:
         Generates output files in the specified output directory.
     """
-    os.makedirs('yolo_labels', exist_ok=True)
-    save_dir="./yolo_labels"
+    coco_labels_dir = os.path.join(dataset_dir, "labels_coco/")
+    yolo_labels_dir = os.path.join(dataset_dir, "labels/")
+
+
+    os.makedirs(yolo_labels_dir, exist_ok=True)
+    save_dir=yolo_labels_dir
 
     classes=list(range(0, 10))
 
     # Import json
-    for json_file in sorted(Path(labels_dir).resolve().glob('*.json')):
-        fn = Path(save_dir) / 'labels' / json_file.stem.replace('instances_', '')  # folder name
+    for json_file in sorted(Path(coco_labels_dir).resolve().glob('*.json')):
+        print(json_file)
+        fn = Path(save_dir) / json_file.stem.split("_coco.json")[0].split("_")[-2] # folder name
         fn.mkdir(parents=True, exist_ok=True)
         with open(json_file) as f:
             data = json.load(f)
@@ -184,4 +189,4 @@ def delete_dsstore(path='../datasets'):
 
 if __name__ == '__main__':
     cfg = parser.parse_args()
-    convert_coco(os.path.join(cfg.bdd_dir, "labels_coco/"))
+    convert_coco(cfg.bdd_dir)
