@@ -4,10 +4,16 @@
 This repository currently is about object detection on BDD100k repository
 
 ## Environment
-Install the requirements
+
+
+Download this repo and install the requirements
 
 
 ```bash
+git clone git@github.com:jsiloto/context_change_bdd100k.git
+cd context_change_bdd100k
+virtualenv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -31,4 +37,21 @@ python scripts/bdd2coco.py '--bdd_dir' $DATASET
 Now we convert the coco format annotations to the yolo format (COCO->YOLO)
 ```bash
 python scripts/coco2yolo.py '--bdd_dir' $DATASET
+```
+
+# Training
+
+Download the YOLOV5 fork and set up the environment
+
+```bash
+git clone git@github.com:jsiloto/yolov5.git
+cd yolov5
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+```bash
+export CUDA_VISIBLE_DEVICES=1
+python train.py --img 640 --epochs 3 --data bdd100k.yaml --weights yolov5s.pt
 ```

@@ -11,9 +11,10 @@ from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='bdd2coco')
 parser.add_argument('--bdd_dir', type=str, required=True)
+parser.add_argument('--ignore', type=str, default="")
 
 
-def convert_coco(dataset_dir='/data/datasets/bdd_100k'):
+def convert_coco(dataset_dir='/data/datasets/bdd_100k', ignore_list=[]):
     """Converts COCO dataset annotations to a format suitable for training YOLOv5 models.
 
     Args:
@@ -62,6 +63,8 @@ def convert_coco(dataset_dir='/data/datasets/bdd_100k'):
             keypoints = []
             for ann in anns:
                 if ann['iscrowd']:
+                    continue
+                if ann['category_id'] in ignore_list:
                     continue
                 # The COCO box format is [top left x, top left y, width, height]
                 box = np.array(ann['bbox'], dtype=np.float64)
@@ -189,4 +192,5 @@ def delete_dsstore(path='../datasets'):
 
 if __name__ == '__main__':
     cfg = parser.parse_args()
-    convert_coco(cfg.bdd_dir)
+    ignore_list = [int(c) for c in cfg.ignore.split(",")]
+    convert_coco(cfg.bdd_dir,ignore_list)
