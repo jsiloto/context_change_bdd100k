@@ -19,12 +19,16 @@ if  [ -z "${g}" ]; then
     usage
 fi
 
+if  [ -z "${DATASET}" ]; then
+    echo "DATASET variable must be defined"
+fi
+
 ################################################
 echo "GPUS ${g}"
 
 COMMAND="docker run --rm -it \
             --shm-size=32G  \
-            -v /data/datasets:/work/data  \
+            -v $DATASET:/data/datasets/  \
             -v $PWD:/work -w /work \
             -u $(id -u):$(id -g)  \
             --network=host \
