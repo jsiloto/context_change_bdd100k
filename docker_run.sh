@@ -23,13 +23,19 @@ if  [ -z "${DATASET}" ]; then
     echo "DATASET variable must be defined"
 fi
 
+if  [ -z "${YOLO}" ]; then
+    echo "YOLO variable must be defined"
+fi
+
+
 ################################################
 echo "GPUS ${g}"
 
 COMMAND="docker run --rm -it \
             --shm-size=32G  \
             -v $DATASET:/data/datasets/  \
-            -v $PWD:/work -w /work \
+            -v $YOLO:/work/yolov5  \
+            -v $PWD:/work/context_change_bdd100k -w /work \
             -u $(id -u):$(id -g)  \
             --network=host \
 	    --userns=host  \
