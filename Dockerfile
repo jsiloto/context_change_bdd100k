@@ -1,10 +1,6 @@
 FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y python3.8 python3-pip \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
     DEBIAN_FRONTEND="noninteractive" \
     apt-get install -y \
     git \
@@ -13,7 +9,7 @@ RUN apt-get update && \
     python3-opencv \
     unzip \
     sudo \
-    vim
+    vim && rm -rf /var/lib/apt/lists/*
 
 ADD requirements.txt .
 RUN pip install -r requirements.txt
