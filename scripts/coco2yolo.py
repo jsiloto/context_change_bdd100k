@@ -30,7 +30,7 @@ def convert_coco(dataset_dir='/data/datasets/bdd_100k', ignore_list=[]):
         Generates output files in the specified output directory.
     """
     coco_labels_dir = os.path.join(dataset_dir, "labels_coco/")
-    yolo_labels_dir = os.path.join(dataset_dir, "labels/")
+    yolo_labels_dir = os.path.join(dataset_dir, "labels/100k/")
 
 
     os.makedirs(yolo_labels_dir, exist_ok=True)
@@ -193,4 +193,5 @@ def delete_dsstore(path='../datasets'):
 if __name__ == '__main__':
     cfg = parser.parse_args()
     ignore_list = [int(c) for c in cfg.ignore.split(",")]
+    print(ignore_list)
     convert_coco(cfg.bdd_dir,ignore_list)
