@@ -192,6 +192,8 @@ def delete_dsstore(path='../datasets'):
 
 if __name__ == '__main__':
     cfg = parser.parse_args()
-    ignore_list = [int(c) for c in cfg.ignore.split(",")]
+    ignore_list = []
+    if len(cfg.ignore) > 0:
+        ignore_list = [int(c) for c in cfg.ignore.split(",")]
     print(ignore_list)
     convert_coco(cfg.bdd_dir,ignore_list)
