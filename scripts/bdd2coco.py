@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='bdd2coco')
 parser.add_argument('--bdd_dir', type=str, required=True)
+parser.add_argument('--scene', type=str, default="", required=True)
 cfg = parser.parse_args()
 
 src_val_dir = os.path.join(cfg.bdd_dir, 'labels_bdd100k', 'bdd100k_labels_images_val.json')
@@ -16,6 +17,11 @@ os.makedirs(os.path.join(cfg.bdd_dir, 'labels_coco'), exist_ok=True)
 
 dst_val_dir = os.path.join(cfg.bdd_dir, 'labels_coco', 'bdd100k_labels_images_val_coco.json')
 dst_train_dir = os.path.join(cfg.bdd_dir, 'labels_coco', 'bdd100k_labels_images_train_coco.json')
+
+scene = ["city street", "tunnel", "highway", "residential", "parking lot", "gas stations"]
+if len(cfg.scene) > 0:
+  scene = [cfg.scene]
+
 
 
 def bdd2coco_detection(labeled_images, save_dir):
@@ -46,6 +52,7 @@ def bdd2coco_detection(labeled_images, save_dir):
     image['file_name'] = i['name']
     image['height'] = 720
     image['width'] = 1280
+    image['attributes'] = i['attributes']
 
     image['id'] = counter
 
@@ -77,7 +84,9 @@ def bdd2coco_detection(labeled_images, save_dir):
       print('empty image!')
       continue
     if tmp == 1:
-      images.append(image)
+
+      if image["attributes"]['scene'] in scene:
+        images.append(image)
 
   attr_dict["images"] = images
   attr_dict["annotations"] = annotations
