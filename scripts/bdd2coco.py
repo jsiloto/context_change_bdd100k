@@ -47,6 +47,9 @@ def bdd2coco_detection(labeled_images, save_dir):
 
   counter = 0
   for i in tqdm(labeled_images):
+    if i["attributes"]['scene'] not in scene:
+      continue
+    
     counter += 1
     image = dict()
     image['file_name'] = i['name']
@@ -84,9 +87,7 @@ def bdd2coco_detection(labeled_images, save_dir):
       print('empty image!')
       continue
     if tmp == 1:
-
-      if image["attributes"]['scene'] in scene:
-        images.append(image)
+      images.append(image)
 
   attr_dict["images"] = images
   attr_dict["annotations"] = annotations
