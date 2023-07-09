@@ -5,10 +5,11 @@ from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='Remove Unlabeled Images')
 parser.add_argument('--bdd_dir', type=str, required=True)
+parser.add_argument('--split', type=str, default="val")
 
-def main(bdd_dir):
-    labels_dir = os.path.join(bdd_dir, "labels/100k/val")
-    images_dir = os.path.join(bdd_dir, "images/100k/val")
+def main(bdd_dir, split):
+    labels_dir = os.path.join(bdd_dir, f"labels/100k/{split}")
+    images_dir = os.path.join(bdd_dir, f"images/100k/{split}")
 
     labels = os.listdir(labels_dir)
     images = os.listdir(images_dir)
@@ -23,4 +24,4 @@ def main(bdd_dir):
 
 if __name__ == '__main__':
     cfg = parser.parse_args()
-    main(cfg.bdd_dir)
+    main(cfg.bdd_dir, cfg.split)
