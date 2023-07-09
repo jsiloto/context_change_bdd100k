@@ -49,7 +49,7 @@ def bdd2coco_detection(labeled_images, save_dir):
   for i in tqdm(labeled_images):
     if i["attributes"]['scene'] not in scene:
       continue
-    
+
     counter += 1
     image = dict()
     image['file_name'] = i['name']
