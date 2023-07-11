@@ -20,9 +20,10 @@ cfg = parser.parse_args()
 
 def main():
     domains = {
+        "baseline": ["baseline"],
         "scene": ["residential", "highway", "city street"],
         "weather": ["overcast", "snowy", "rainy", "partly cloudy", "clear"],
-        "timeofday": ["dawn/dusk", "daytime", "night"],
+        "timeofday": ["dawn/dusk", "daytime", "night"]
     }
     yaml_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "bdd100k.yaml")
     with open(yaml_path, 'r') as file:
@@ -45,8 +46,12 @@ def main():
 
     for k, v in domains.items():
         for name in v:
-            train_list = [l["name"].split(".jpg")[0] for l in train_labels if l['attributes'][k] == name]
-            val_list = [l["name"].split(".jpg")[0] for l in val_labels if l['attributes'][k] == name]
+            if name == "baseline":
+                train_list = [l["name"].split(".jpg")[0] for l in train_labels]
+                val_list = [l["name"].split(".jpg")[0] for l in val_labels]
+            else:
+                train_list = [l["name"].split(".jpg")[0] for l in train_labels if l['attributes'][k] == name]
+                val_list = [l["name"].split(".jpg")[0] for l in val_labels if l['attributes'][k] == name]
 
             train_list = random.sample(train_list, 4800)
 
@@ -84,6 +89,9 @@ def main():
                     src = os.path.join(cfg.bdd_dir, "labels/100k/val", f"{fname}.txt")
                     dst = os.path.join(domain_dir, "labels/val", f"{fname}.txt")
                     shutil.copy(src, dst)
+
+
+
 
 
 
