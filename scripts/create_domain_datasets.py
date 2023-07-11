@@ -62,8 +62,8 @@ def main():
 
             domain_dir = os.path.join(cfg.bdd_dir, "domains", name)
             datayaml['path'] = domain_dir
-            datayaml['train'] = "/images/train"
-            datayaml['val'] = "/images/val"
+            datayaml['train'] = "images/train"
+            datayaml['val'] = "images/val"
 
 
             with open(f'./data/{name}.yaml', 'w+') as file:
