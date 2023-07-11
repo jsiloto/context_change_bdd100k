@@ -18,7 +18,7 @@ os.makedirs(os.path.join(cfg.bdd_dir, 'labels_coco'), exist_ok=True)
 dst_val_dir = os.path.join(cfg.bdd_dir, 'labels_coco', 'bdd100k_labels_images_val_coco.json')
 dst_train_dir = os.path.join(cfg.bdd_dir, 'labels_coco', 'bdd100k_labels_images_train_coco.json')
 
-scene = ["city street", "tunnel", "highway", "residential", "parking lot", "gas stations"]
+scene = ["city street", "tunnel", "highway", "residential", "parking lot", "gas stations", "undefined"]
 if len(cfg.scene) > 0:
   scene = [cfg.scene]
 
