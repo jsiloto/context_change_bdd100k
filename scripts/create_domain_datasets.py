@@ -73,7 +73,7 @@ def main():
                     src = os.path.join(cfg.bdd_dir, "images/100k/train", f"{fname}.jpg")
                     dst = os.path.join(domain_dir, "images/train", f"{fname}.jpg")
                     shutil.copy(src, dst)
-                    src = os.path.join(cfg.bdd_dir, "labels/train", f"{fname}.txt")
+                    src = os.path.join(cfg.bdd_dir, "labels/100k/train", f"{fname}.txt")
                     dst = os.path.join(domain_dir, "labels/train", f"{fname}.txt")
                     shutil.copy(src, dst)
 
@@ -81,7 +81,7 @@ def main():
                     src = os.path.join(cfg.bdd_dir, "images/100k/val", f"{fname}.jpg")
                     dst = os.path.join(domain_dir, "images/val", f"{fname}.jpg")
                     shutil.copy(src, dst)
-                    src = os.path.join(cfg.bdd_dir, "labels/val", f"{fname}.txt")
+                    src = os.path.join(cfg.bdd_dir, "labels/100k/val", f"{fname}.txt")
                     dst = os.path.join(domain_dir, "labels/val", f"{fname}.txt")
                     shutil.copy(src, dst)
 
