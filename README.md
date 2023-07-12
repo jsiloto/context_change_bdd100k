@@ -39,6 +39,11 @@ Now we convert the coco format annotations to the yolo format (COCO->YOLO)
 python scripts/coco2yolo.py '--bdd_dir' $DATASET
 ```
 
+Finally, generate the domain specific datasets:
+```bash
+python scripts/create_domain_datasets.py '--bdd_dir' $DATASET
+```
+
 # Training
 
 Download the YOLOV5 fork and set up the environment
