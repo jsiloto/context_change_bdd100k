@@ -1,6 +1,7 @@
 import argparse
 import copy
 import os
+from math import log2
 
 import pandas as pd
 
@@ -21,7 +22,7 @@ def convert2percentage(d):
     for k, v in d.items():
         dd[k] = round(1.0*v/total_instances, 4)
 
-    return dd
+    return dd, total_instances
 
 def get_distributions(cfg):
     class_distribution_dict = {}
@@ -39,34 +40,25 @@ def get_distributions(cfg):
                     c = int(line.split(" ")[0])
                     class_num[c] += 1
 
-        print(d)
+
         class_distribution_dict[d] = convert2percentage(class_num)
 
     return class_distribution_dict
 
+def h2(prob_dict):
+    probs = [v for k,v in prob_dict.items()]
+    c = [p*log2(p) for p in probs]
+    return -sum(c)
+
 def main(cfg):
+    class_distribution_dict = get_distributions(cfg)
+    for k, v in class_distribution_dict.items():
+        print(f"{k} & {v[1]} & {round(h2(v[0]), 3)} \\\\")
 
-
-
-    df = pd.DataFrame(columns=domains, index=domains)
-    series = {}
-    df.loc[model] = pd.Series(series)
+    # df = pd.DataFrame(columns=domains, index=domains)
+    # series = {}
+    # df.loc[model] = pd.Series(series)
 
 if __name__ == '__main__':
     cfg = parser.parse_args()
     main(cfg)
-
-
-
-
-
-
-for model in domains:
-    series = {}
-    for data in domains:
-        results_file = f"domains/{model}.{data}/results.json"
-        with open(results_file, "r") as fp:
-            results = json.load(fp)
-            series[data] = results['map']
-
-    df.loc[model] = pd.Series(series)
