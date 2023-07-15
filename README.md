@@ -5,16 +5,14 @@ This repository currently is about object detection on BDD100k repository
 
 ## Environment
 
-
-Download this repo and install the requirements
-
-
+Download this repo, install the requirements, download the YOLOV5 fork
 ```bash
 git clone git@github.com:jsiloto/context_change_bdd100k.git
 cd context_change_bdd100k
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
+git clone git@github.com:jsiloto/yolov5.git
 ```
 
 ### Dataset
@@ -39,23 +37,6 @@ Now we convert the coco format annotations to the yolo format (COCO->YOLO)
 python scripts/coco2yolo.py '--bdd_dir' $DATASET
 ```
 
-# Training
-
-Download the YOLOV5 fork and set up the environment
-
-```bash
-git clone git@github.com:jsiloto/yolov5.git
-cd yolov5
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-```bash
-export CUDA_VISIBLE_DEVICES=1
-python train.py --img 640 --epochs 3 --data bdd100k.yaml --weights yolov5s.pt
-```
-
 # Other Dataset Specs
 
 ## Domain specific datasets
@@ -65,6 +46,8 @@ python scripts/create_domain_datasets.py '--bdd_dir' $DATASET
 ```
 
 ## Movie Dataset
+
+### Create the frame by frame dataset
 ```bash
 DATASET=/data/datasets/bdd100kvideo/
 ls -l $DATASET
@@ -77,3 +60,12 @@ python scripts/movie_dataset.py --movie_dir /data/datasets/bdd100kvideo/ --num_c
 python scripts/movie_dataset.py --movie_dir /data/datasets/bdd100kvideo/ --num_clips 25 --split val
 ```
 
+### Annotate the dataset using the baseline model
+
+
+# Training
+
+```bash
+export CUDA_VISIBLE_DEVICES=1
+python yolov5/train.py --img 640 --epochs 3 --data bdd100k.yaml --weights yolov5s.pt
+```
