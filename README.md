@@ -72,3 +72,8 @@ ls -l $DATASET
 unzip -j $DATASET/bdd100k_videos_train_14.zip bdd100k/videos/* -d $DATASET/video/train
 unzip -j $DATASET/bdd100k_videos_val_04.zip bdd100k/videos/* -d $DATASET/video/val
 ```
+```bash
+python scripts/movie_dataset.py --movie_dir /data/datasets/bdd100kvideo/ --num_clips 25 --split train
+python scripts/movie_dataset.py --movie_dir /data/datasets/bdd100kvideo/ --num_clips 25 --split val
+```
+
