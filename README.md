@@ -39,11 +39,6 @@ Now we convert the coco format annotations to the yolo format (COCO->YOLO)
 python scripts/coco2yolo.py '--bdd_dir' $DATASET
 ```
 
-Finally, generate the domain specific datasets:
-```bash
-python scripts/create_domain_datasets.py '--bdd_dir' $DATASET
-```
-
 # Training
 
 Download the YOLOV5 fork and set up the environment
@@ -59,4 +54,21 @@ pip install -r requirements.txt
 ```bash
 export CUDA_VISIBLE_DEVICES=1
 python train.py --img 640 --epochs 3 --data bdd100k.yaml --weights yolov5s.pt
+```
+
+# Other Dataset Specs
+
+## Domain specific datasets
+generate the domain specific datasets:
+```bash
+python scripts/create_domain_datasets.py '--bdd_dir' $DATASET
+```
+
+## Movie Dataset
+```bash
+DATASET=/data/datasets/bdd100kvideo/
+ls -l $DATASET
+> bdd100k_videos_train_14.zip  bdd100k_videos_val_04.zip
+unzip -j $DATASET/bdd100k_videos_train_14.zip bdd100k/videos/* -d $DATASET/video/train
+unzip -j $DATASET/bdd100k_videos_val_04.zip bdd100k/videos/* -d $DATASET/video/val
 ```
