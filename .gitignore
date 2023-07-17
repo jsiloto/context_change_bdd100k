@@ -1,6 +1,7 @@
 .idea/
 data/
 yolov5/
+weights/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
