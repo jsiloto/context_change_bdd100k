@@ -48,6 +48,8 @@ python scripts/create_domain_datasets.py '--bdd_dir' $DATASET
 ## Movie Dataset
 
 ### Create the frame by frame dataset
+First be sure to download the appropriate files for reproduction
+and unzip to the correct location
 ```bash
 DATASET=/data/datasets/bdd100kvideo/
 ls -l $DATASET
@@ -55,15 +57,21 @@ ls -l $DATASET
 unzip -j $DATASET/bdd100k_videos_train_14.zip bdd100k/videos/* -d $DATASET/video/train
 unzip -j $DATASET/bdd100k_videos_val_04.zip bdd100k/videos/* -d $DATASET/video/val
 ```
+
+Run the following scripts which will create the frame by frame dataset,
+annotate it using the yolov5 format and evaluate on domain specific models
 ```bash
-python scripts/movie_dataset.py --movie_dir /data/datasets/bdd100kvideo/ --num_clips 25 --split train
-python scripts/movie_dataset.py --movie_dir /data/datasets/bdd100kvideo/ --num_clips 25 --split val
+./scripts/movie_dataset_build.sh
+./scripts/movie_dataset_domain.sh
 ```
 
-### Annotate the dataset using the baseline model
+Now, we have built and evaluated the movie dataset with many model, we can
+see which models are better together
 
+```bash
+python scripts/domain_switching_map.py
+```
 
-# Training
 
 ```bash
 export CUDA_VISIBLE_DEVICES=1
