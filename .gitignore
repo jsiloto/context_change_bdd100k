@@ -2,6 +2,8 @@
 data/
 yolov5/
 weights/
+movie_dataset/
+embeddings/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
