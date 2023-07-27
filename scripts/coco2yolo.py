@@ -7,43 +7,38 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+import yaml
 from tqdm import tqdm
 
-parser = argparse.ArgumentParser(description='bdd2coco')
-parser.add_argument('--bdd_dir', type=str, required=True)
-parser.add_argument('--ignore', type=str, default="")
+parser = argparse.ArgumentParser(description='coco2yolo')
+parser.add_argument('--config', type=str, required=True)
 
 
-def convert_coco(dataset_dir='/data/datasets/bdd_100k', ignore_list=[]):
+def coco91_to_coco80_class():  # converts 80-index (val2014) to 91-index (paper)
+    # https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/
+    x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, None, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, None, 24, 25, None,
+         None, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, None, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+         51, 52, 53, 54, 55, 56, 57, 58, 59, None, 60, None, None, 61, None, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
+         None, 73, 74, 75, 76, 77, 78, 79, None]
+    return x
+
+
+def convert_coco(dataset_specs):
     """Converts COCO dataset annotations to a format suitable for training YOLOv5 models.
-
     Args:
-        labels_dir (str, optional): Path to directory containing COCO dataset annotation files.
-
-    Raises:
-        FileNotFoundError: If the labels_dir path does not exist.
-
-    Example Usage:
-        convert_coco(labels_dir='../coco/annotations/')
-
-    Output:
-        Generates output files in the specified output directory.
+        dataset_specs (dict): dataset specifications with input and output directories
     """
-    coco_labels_dir = os.path.join(dataset_dir, "labels_coco/")
-    yolo_labels_dir = os.path.join(dataset_dir, "labels/100k/")
-
+    base_dir = dataset_specs['path']
+    coco_train_annotations = os.path.join(base_dir, dataset_specs['coco']['annotations']['train'])
+    coco_val_annotations = os.path.join(base_dir, dataset_specs['coco']['annotations']['val'])
+    yolo_labels_dir = os.path.join(base_dir, "labels/")
 
     os.makedirs(yolo_labels_dir, exist_ok=True)
-    save_dir=yolo_labels_dir
+    os.makedirs(yolo_labels_dir + "/train", exist_ok=True)
+    os.makedirs(yolo_labels_dir + "/val", exist_ok=True)
 
-    classes=list(range(0, 10))
-
-    # Import json
-    for json_file in sorted(Path(coco_labels_dir).resolve().glob('*.json')):
-        print(json_file)
-        fn = Path(save_dir) / json_file.stem.split("_coco.json")[0].split("_")[-2] # folder name
-        fn.mkdir(parents=True, exist_ok=True)
-        with open(json_file) as f:
+    def convert_coco_annotation(annotation_file, save_dir):
+        with open(annotation_file) as f:
             data = json.load(f)
 
         # Create image dict
@@ -54,7 +49,7 @@ def convert_coco(dataset_dir='/data/datasets/bdd_100k', ignore_list=[]):
             imgToAnns[ann['image_id']].append(ann)
 
         # Write labels file
-        for img_id, anns in tqdm(imgToAnns.items(), desc=f'Annotations {json_file}'):
+        for img_id, anns in tqdm(imgToAnns.items(), desc=f'Annotations {annotation_file}'):
             img = images['%g' % img_id]
             h, w, f = img['height'], img['width'], img['file_name']
 
@@ -63,8 +58,6 @@ def convert_coco(dataset_dir='/data/datasets/bdd_100k', ignore_list=[]):
             keypoints = []
             for ann in anns:
                 if ann['iscrowd']:
-                    continue
-                if ann['category_id'] in ignore_list:
                     continue
                 # The COCO box format is [top left x, top left y, width, height]
                 box = np.array(ann['bbox'], dtype=np.float64)
@@ -79,12 +72,14 @@ def convert_coco(dataset_dir='/data/datasets/bdd_100k', ignore_list=[]):
                 if box not in bboxes:
                     bboxes.append(box)
 
-
             # Write
-            with open((fn / f).with_suffix('.txt'), 'a') as file:
+            with open((save_dir / f).with_suffix('.txt'), 'a') as file:
                 for i in range(len(bboxes)):
                     line = *(bboxes[i]),  # cls, box or segments
                     file.write(('%g ' * len(line)).rstrip() % line + '\n')
+
+    convert_coco_annotation(coco_train_annotations, Path(yolo_labels_dir + "/train"))
+    convert_coco_annotation(coco_val_annotations, Path(yolo_labels_dir + "/val"))
 
 
 def rle2polygon(segmentation):
@@ -180,20 +175,7 @@ def merge_multi_segment(segments):
     return s
 
 
-def delete_dsstore(path='../datasets'):
-    """Delete Apple .DS_Store files in the specified directory and its subdirectories."""
-    from pathlib import Path
-
-    files = list(Path(path).rglob('.DS_store'))
-    print(files)
-    for f in files:
-        f.unlink()
-
-
 if __name__ == '__main__':
     cfg = parser.parse_args()
-    ignore_list = []
-    if len(cfg.ignore) > 0:
-        ignore_list = [int(c) for c in cfg.ignore.split(",")]
-    print(ignore_list)
-    convert_coco(cfg.bdd_dir,ignore_list)
+    dataset_specs = yaml.safe_load(open(cfg.config))
+    convert_coco(dataset_specs)
