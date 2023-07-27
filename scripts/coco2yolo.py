@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import shutil
 from collections import defaultdict
 from pathlib import Path
 
@@ -14,14 +15,14 @@ parser = argparse.ArgumentParser(description='coco2yolo')
 parser.add_argument('--config', type=str, required=True)
 
 
-def coco91_to_coco80_class():  # converts 80-index (val2014) to 91-index (paper)
+def coco91_to_coco80_class(c):  # converts 80-index (val2014) to 91-index (paper)
     # https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/
     x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, None, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, None, 24, 25, None,
          None, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, None, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
          51, 52, 53, 54, 55, 56, 57, 58, 59, None, 60, None, None, 61, None, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
          None, 73, 74, 75, 76, 77, 78, 79, None]
-    return x
 
+    return x[c]
 
 def convert_coco(dataset_specs):
     """Converts COCO dataset annotations to a format suitable for training YOLOv5 models.
@@ -31,11 +32,19 @@ def convert_coco(dataset_specs):
     base_dir = dataset_specs['path']
     coco_train_annotations = os.path.join(base_dir, dataset_specs['coco']['annotations']['train'])
     coco_val_annotations = os.path.join(base_dir, dataset_specs['coco']['annotations']['val'])
-    yolo_labels_dir = os.path.join(base_dir, "labels/")
+    if 'labels' in dataset_specs:
+        yolo_labels_dir = os.path.join(base_dir, dataset_specs['labels'])
+    else:
+        yolo_labels_dir = os.path.join(base_dir, "labels/")
 
+    shutil.rmtree(yolo_labels_dir, ignore_errors=True)
     os.makedirs(yolo_labels_dir, exist_ok=True)
     os.makedirs(yolo_labels_dir + "/train", exist_ok=True)
     os.makedirs(yolo_labels_dir + "/val", exist_ok=True)
+
+    ignored_classes = []
+    if 'ignored_classes' in dataset_specs:
+        ignored_classes = dataset_specs['ignored_classes']
 
     def convert_coco_annotation(annotation_file, save_dir):
         with open(annotation_file) as f:
@@ -59,6 +68,8 @@ def convert_coco(dataset_specs):
             for ann in anns:
                 if ann['iscrowd']:
                     continue
+                if ann['category_id'] in ignored_classes:
+                    continue
                 # The COCO box format is [top left x, top left y, width, height]
                 box = np.array(ann['bbox'], dtype=np.float64)
                 box[:2] += box[2:] / 2  # xy top-left corner to center
@@ -67,7 +78,7 @@ def convert_coco(dataset_specs):
                 if box[2] <= 0 or box[3] <= 0:  # if w <= 0 and h <= 0
                     continue
 
-                cls = ann['category_id'] - 1  # class
+                cls = coco91_to_coco80_class(ann['category_id'] - 1)  # class
                 box = [cls] + box.tolist()
                 if box not in bboxes:
                     bboxes.append(box)
