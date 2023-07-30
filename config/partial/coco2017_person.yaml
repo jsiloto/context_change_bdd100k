@@ -1,17 +1,21 @@
 path: /data/datasets/coco2017  # dataset root dir
 train: images/train  # train images (relative to 'path') 118287 images
 val: images/val  # val images (relative to 'path') 5000 images
-labels: labels_half  # labels (relative to 'path')
+labels: labels_person  # labels (relative to 'path')
 
 coco:
   annotations:
     train: annotations/instances_train2017.json  # train annotations (relative to 'path')
     val: annotations/instances_val2017.json  # val annotations (relative to 'path')
 
-ignored_classes: [40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-                  50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-                  60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
-                  70, 71, 72, 73, 74, 75, 76, 77, 78, 79] # classes to be ignored in training
+ignored_classes: [1, 2, 3, 4, 5, 6, 7, 8, 9,
+                 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+                 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+                 40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+                 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+                 60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+                 70, 71, 72, 73, 74, 75, 76, 77, 78, 79] # classes to be ignored in training
 # Classes
 names:
   0: person

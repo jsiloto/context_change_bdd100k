@@ -66,9 +66,10 @@ def convert_coco(dataset_specs):
             segments = []
             keypoints = []
             for ann in anns:
+                cls = coco91_to_coco80_class(ann['category_id'] - 1)  # class
                 if ann['iscrowd']:
                     continue
-                if ann['category_id'] in ignored_classes:
+                if cls in ignored_classes:
                     continue
                 # The COCO box format is [top left x, top left y, width, height]
                 box = np.array(ann['bbox'], dtype=np.float64)
@@ -78,7 +79,6 @@ def convert_coco(dataset_specs):
                 if box[2] <= 0 or box[3] <= 0:  # if w <= 0 and h <= 0
                     continue
 
-                cls = coco91_to_coco80_class(ann['category_id'] - 1)  # class
                 box = [cls] + box.tolist()
                 if box not in bboxes:
                     bboxes.append(box)
